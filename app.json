@@ -3,14 +3,16 @@
     "name": "LoginPage",
     "slug": "LoginPage",
     "version": "1.0.0",
-     "plugins": ["expo-facebook"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#ffffff",
+      "plugins": [
+        
+          "expo-image-picker"]
     },
     "updates": {
       "fallbackToCacheTimeout": 0

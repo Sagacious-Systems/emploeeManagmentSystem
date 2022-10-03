@@ -1,10 +1,22 @@
-import React, { useState } from "react";
-import { Text, View, StyleSheet, Image, TouchableOpacity } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Button,
+  TextInput,
+} from "react-native";
 import TextBox from "../components/TextBox";
 import Btn from "../components/Btn";
 import firebase from "firebase/app";
 import "firebase/auth";
-import * as Facebook from 'expo-facebook';
+import { AsyncStorage } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import axios from "axios";
+import { Formik } from "formik";
+const url = "http://192.168.5.34:5001/auth/login";
 const styles = StyleSheet.create({
   view: {
     flex: 1,
@@ -12,13 +24,42 @@ const styles = StyleSheet.create({
     //justifyContent: "center",
     alignItems: "center",
     marginTop: "10%",
+    //backgroundColor:'blue'
+  },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
   },
   logo: {
-    width: "60%",
-    maxWidth: 300,
-    maxHeight: 250,
+    width: 250,
+    //maxWidth: 300,
+    //maxHeight: 250,
+    height: 250,
     marginVertical: "10%",
-    borderRadius: 200,
+    borderRadius: 240 / 2,
+    // resizeMode:"stretch"
+  },
+  forgot: {
+    fontSize: 15,
+    fontWeight: "bold",
+    fontStyle: "italic",
+    color: "#D3D3D3",
+    marginVertical: 25,
+    textAlign: "right",
+  },
+  signUp: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#4d5151",
+    marginVertical: 25,
+    marginTop: "30%",
+  },
+  underline: {
+    textDecorationLine: "underline",
+    fontStyle: "italic",
+    color: "#e0c222",
   },
 });
 
@@ -27,7 +68,7 @@ export default function Loginscreen({ navigation }) {
     email: "",
     pwd: "",
   });
-// anees
+
   function handleChange(text, eventName) {
     setValues((prev) => {
       return {
@@ -37,93 +78,134 @@ export default function Loginscreen({ navigation }) {
     });
   }
 
-  // function Login() {
-  //   const { email, pwd } = values;
-
-  //   firebase
-  //     .auth()
-  //     .signInWithEmailAndPassword(email, pwd)
-  //     .then(() => {})
-  //     .catch((error) => {
-  //       alert(error.message);
-  //       // ..
-  //     });
-  // }
-  // const config = {
-  //   iosClientId:
-  //     "224989711578-hhsnq64qnd53tio9cv7qouor7ccllqs5.apps.googleusercontent.com",
-  // };
-  async function logIn() {
+  const save = async () => {
     try {
-
-      await Facebook.initializeAsync({
-        appId: '352285113706740'
-      });
-      const { type, token, expirationDate, permissions, declinedPermissions } =
-        await Facebook.logInWithReadPermissionsAsync({
-          permissions: ['public_profile'],
-        });
-      if (type === 'success') {
-        // Get the user's name using Facebook's Graph API
-        const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-        Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
-      } else {
-        // type === 'cancel'
-      }
-    } catch ({ message }) {
-      alert(`Facebook Login Error: ${message}`);
+      console.log("called");
+      await AsyncStorage.setItem("userName", values.email);
+    } catch (error) {
+      console.log("error", error);
     }
+  };
+  function Login() {
+    const { email, pwd } = values;
+
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, pwd)
+      .then((res) => {
+        console.log(res);
+        navigation.navigate("Select");
+      })
+      .catch((error) => {
+        alert(error.message);
+        // ..
+      });
   }
+  // const [username, setUserName] = useState("");
+  // const [password, setPassword] = useState("");
+  // let loginData = {
+  //   username: username,
+  //   password: password,
+  // };
+  // const handleSubmit = async () => {
+  //   console.log("url",url)
+  //   console.log(loginData)
+  //   try {
+  //     const resp = await axios.post(url, loginData);
+  //     console.log("response",resp)
+
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // const handleSubmit = async () =>{
+  //   try{
+  //            console.log("before")
+  //            const res = await axios.post(url,{
+  //              username:username,
+  //              password:password
+  //            });
+  //            console.log("response",res);
+  //            console.log("after")
+  //   }catch(error){
+  //          console.log(error)
+  //   }
+  // }
   return (
-    <View style={styles.view}>
-      <Image source={require("../assets/logo.jpg")} style={styles.logo} />
-      <Text
-        style={{
-          fontSize: 34,
-          fontWeight: "bold",
-          marginBottom: 20,
-          color: "grey",
-          fontStyle: "italic",
-        }}
-      >
-        Demo App
-      </Text>
-      <TextBox
-        placeholder="Email Address"
-        onChangeText={(text) => handleChange(text, "email")}
-      />
-      <TextBox
-        placeholder="Password"
-        onChangeText={(text) => handleChange(text, "pwd")}
-        secureTextEntry={true}
-      />
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "92%",
-        }}
-      >
-        <Btn onClick={() => Login()} title="Login" style={{ width: "48%" }} />
-        <Btn
-          onClick={() => navigation.navigate("Sign Up")}
-          title="Sign Up"
-          style={{ width: "48%", backgroundColor: "#3B71F3" }}
+    <LinearGradient
+      colors={["#014872", "#A0EACF"]}
+      style={styles.linearGradient}
+    >
+      <View style={styles.view}>
+        <Image source={require("../assets/logo8.jpg")} style={styles.logo} />
+        <TextBox
+          placeholder="Email Address"
+          onChangeText={(text) => handleChange(text, "email")}
+          // onChangeText={() => setUserName()}
         />
-      </View>
-      <Btn
-        onClick={() => navigation.navigate("ForgotPassword")}
-        title="ForgotPassword"
-        style={{ width: "48%", backgroundColor: "#3B71F3", marginTop: "20%" }}
-      />
-      <View>
-        <Btn
-          onClick={() => logIn()}
-          title="Login with Facebook"
-          style={{ width: 210 }}
+        <TextBox
+          placeholder="Password"
+          onChangeText={(text) => handleChange(text, "pwd")}
+          // value={password}
+          // onChangeText={() => setPassword()}
+          secureTextEntry={true}
         />
+        <View
+          style={{
+            //flexDirection: "row",
+            justifyContent: "space-between",
+            //alignItems: "center",
+            width: "92%",
+          }}
+        >
+          <Text
+            onPress={() => navigation.navigate("ForgotPassword")}
+            style={styles.forgot}
+          >
+            ForgotPassword?
+          </Text>
+          <Btn
+            onClick={() => {
+              save();
+              Login();
+            }}
+            title="Login"
+            style={{ width: "100%", backgroundColor: "#e0c222" }}
+          />
+          {/* <Btn
+            onClick={handleSubmit}
+            style={{ width: "100%", backgroundColor: "#e0c222" }}
+            title="login"
+            type={"submit"}
+          /> */}
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            marginTop: "20%",
+          }}
+        >
+          <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
+          <View>
+            <Text style={{ width: 50, textAlign: "center", color: "black" }}>
+              OR
+            </Text>
+          </View>
+          <View style={{ flex: 1, height: 1, backgroundColor: "black" }} />
+        </View>
+        <Text style={styles.signUp}>
+          Don't have an account?{" "}
+          <Text
+            onPress={() => navigation.navigate("Sign Up")}
+            style={styles.underline}
+          >
+            Sign Up
+          </Text>
+        </Text>
       </View>
-    </View>
+    </LinearGradient>
   );
 }

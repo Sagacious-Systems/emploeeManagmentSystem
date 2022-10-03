@@ -1,14 +1,20 @@
 //import liraries
 import React, { Component } from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Alert, Button, TextInput } from "react-native";
-import { useState } from 'react';
-import firebase from 'firebase/app';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+  Button,
+  TextInput,
+} from "react-native";
+import { useState } from "react";
+import firebase from "firebase/app";
 import "firebase/auth";
-import * as AuthSession from 'expo-auth-session';
-//import auth from '@react-native-firebase/auth';
-//import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// create a component
+import * as AuthSession from "expo-auth-session";
+import { LinearGradient } from "expo-linear-gradient";
+import Btn from "../components/Btn";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [showLoading, setShowLoading] = useState(false);
@@ -23,45 +29,64 @@ const ForgotPassword = () => {
     }
   };
   return (
-    <View style={styles.container}>
-      <View style={styles.formContainer}>
-        <View
-          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-        >
-          <Text style={{ fontSize: 28, height: 50, fontWeight:'bold' }}>Reset Password!</Text>
-        </View>
-        <View style={styles.text}>
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter Your Email"
-            //leftIcon={<Icon name="mail" size={24} />}
-            value={email}
-            onChangeText={setEmail}
-          />
-        </View>
-        <View style={styles.subContainer}>
-          <Button
-            style={styles.Input}
-           //icon={<Icon name="input" size={15} color="white" />}
-            title="Reset"
-            onPress={() => reset()}
-          />
-        </View>
-     
-       {showLoading && (
-          <View style={styles.activity}>
-            <ActivityIndicator size="large" color="#0000ff" />
+    <LinearGradient
+      colors={["#014872", "#A0EACF"]}
+      style={styles.linearGradient}
+    >
+      <View style={styles.container}>
+        <View style={styles.formContainer}>
+          <View
+            style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+          >
+            <Text style={{ fontSize: 28, height: 50, fontWeight: "bold" }}>
+              Reset Password!
+            </Text>
           </View>
-       )}
+          <View style={styles.text}>
+            <Text
+              style={{
+                fontSize: 15,
+                fontWeight: "bold",
+                color: "#e0c222",
+                fontStyle: "italic",
+                marginBottom: 30,
+              }}
+            >
+              Confirm your email and we'll send the instructions
+            </Text>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter Your Email"
+              //leftIcon={<Icon name="mail" size={24} />}
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+          <View style={styles.subContainer}>
+            {/* <Button
+              style={styles.Input}
+              //icon={<Icon name="input" size={15} color="white" />}
+              title="Reset"
+              onPress={() => reset()}
+            /> */}
+            <Btn onClick={() => reset()} title="Reset" style={styles.Input} />
+          </View>
+
+          {showLoading && (
+            <View style={styles.activity}>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          )}
+        </View>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 
 // define your styles
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     //justifyContent: "center",
     alignItems: "center",
   },
@@ -71,7 +96,6 @@ const styles = StyleSheet.create({
   },
   subContainer: {
     marginBottom: 20,
-    padding: 5,
   },
   activity: {
     position: "absolute",
@@ -82,19 +106,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
+  },
   textInput: {
     fontSize: 18,
-    width:380,
-    border:1,
-    borderRadius:5,
-    borderColor:'grey',
-    backgroundColor:'white',
-    paddingVertical:10
-    
+    width: 380,
+    border: 1,
+    borderRadius: 5,
+    borderColor: "grey",
+    backgroundColor: "white",
+    paddingVertical: 10,
   },
-Input:{
-    fontWeight:'bold'
-}
+  Input: {
+    fontWeight: "bold",
+    backgroundColor: "#e0c222",
+    width: "100%",
+    //justifyContent:'center',
+    //alignItems:'center'
+  },
 });
 //make this component available to the app
 export default ForgotPassword;
